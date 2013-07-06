@@ -23,6 +23,7 @@
 #import "RDVFirstViewController.h"
 #import "RDVTabBarController.h"
 #import "RDVTabBarItem.h"
+#import "GGAppDelegate.h"
 
 @interface RDVFirstViewController ()
 
@@ -48,7 +49,24 @@
     [view setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
     [view setBackgroundColor:[UIColor redColor]];
     
+    UIBarButtonItem *btn = [[UIBarButtonItem alloc] initWithTitle:@"TabBarAction" style:UIBarButtonItemStyleBordered target:self action:@selector(tabbarAction)];
+    self.navigationItem.rightBarButtonItem = btn;
+    
     self.view = view;
+}
+
+-(void)tabbarAction
+{
+    GGAppDelegate *appDelegate = [UIApplication sharedApplication].delegate;
+    RDVTabBarController *tabbarCtrl = ((RDVTabBarController *)appDelegate.viewController);
+    if (tabbarCtrl.isTabbarHidden)
+    {
+        [tabbarCtrl showTabBarAnimated:YES];
+    }
+    else
+    {
+        [tabbarCtrl hideTabBarAnimated:YES];
+    }
 }
 
 - (NSUInteger)supportedInterfaceOrientations {

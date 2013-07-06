@@ -33,6 +33,8 @@
 @property (nonatomic, weak) UIViewController *selectedViewController;
 @property (nonatomic) NSUInteger selectedIndex;
 
+@property (readonly, nonatomic)     BOOL    isTabbarHidden;
+
 - (void)showTabBarAnimated:(BOOL)aAnimated;
 - (void)hideTabBarAnimated:(BOOL)aAnimated;
 

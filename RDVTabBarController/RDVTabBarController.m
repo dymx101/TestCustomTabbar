@@ -23,6 +23,9 @@
 #import "RDVTabBarController.h"
 #import "RDVTabBarItem.h"
 
+#define TABBAR_ANIM_DURATION    .4f
+
+
 @interface RDVTabBarController ()
 
 @property (nonatomic, readwrite) RDVTabBar *tabBar;
@@ -60,18 +63,115 @@
         }
     }
     
-    [[self contentView] setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height - tabBarHeight)];
-    [[self tabBar] setFrame:CGRectMake(0, viewSize.height - tabBarHeight, viewSize.width, tabBarHeight)];
+    self.tabBar.frame = [self _tabbarRectHidden:_isTabbarHidden];
+    self.contentView.frame = [self _contentViewRectHidden:_isTabbarHidden];
+    //[[self contentView] setFrame:CGRectMake(0, 0, viewSize.width, viewSize.height - tabBarHeight)];
+    //[[self tabBar] setFrame:CGRectMake(0, viewSize.height - tabBarHeight, viewSize.width, tabBarHeight)];
+}
+
+-(CGRect)_tabbarRectHidden:(BOOL)aHidden
+{
+    CGSize viewSize = CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
+    CGFloat tabBarHeight = CGRectGetHeight([[self tabBar] frame]);
+    if (!tabBarHeight) {
+        tabBarHeight = 49;
+    }
+    
+    CGRect tabbarRect = CGRectMake(0, viewSize.height - tabBarHeight, viewSize.width, tabBarHeight);
+    if (aHidden)
+    {
+        tabbarRect = CGRectOffset(tabbarRect, 0, tabBarHeight);
+    }
+    
+    return tabbarRect;
+}
+
+-(CGRect)_contentViewRectHidden:(BOOL)aHidden
+{
+    CGSize viewSize = CGSizeMake(CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame));
+    CGFloat tabBarHeight = CGRectGetHeight([[self tabBar] frame]);
+    if (!tabBarHeight) {
+        tabBarHeight = 49;
+    }
+    
+    CGRect contentRect = CGRectMake(0, 0, viewSize.width, viewSize.height - tabBarHeight);
+    if (aHidden)
+    {
+        contentRect = CGRectMake(0, 0, viewSize.width, viewSize.height);
+    }
+    
+    return contentRect;
 }
 
 - (void)showTabBarAnimated:(BOOL)aAnimated
 {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)   return;
+    //[self.view.layer removeAllAnimations];
     
+    _isTabbarHidden = NO;
+    //self.tabBar.hidden = NO;
+    
+    void(^moveTabbarUp)(void) = ^{
+        self.tabBar.frame = [self _tabbarRectHidden:_isTabbarHidden];
+    };
+    
+    if (aAnimated)
+    {
+        [UIView animateWithDuration:TABBAR_ANIM_DURATION animations:^{
+            
+            moveTabbarUp();
+            
+            
+        } completion:^(BOOL finished){
+            //DLog(@"show tabbar finished:%d", finished);
+            
+        }];
+        
+        
+        
+        [UIView animateWithDuration:TABBAR_ANIM_DURATION * 2 animations:^{
+            self.contentView.frame = [self _contentViewRectHidden:_isTabbarHidden];
+        }];
+    }
+    else
+    {
+        moveTabbarUp();
+        self.contentView.frame = [self _contentViewRectHidden:_isTabbarHidden];
+    }
 }
 
 - (void)hideTabBarAnimated:(BOOL)aAnimated
 {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)   return;
+    //[self.view.layer removeAllAnimations];
     
+    _isTabbarHidden = YES;
+    //self.tabBar.hidden = YES;
+    
+    void(^moveTabbarDown)(void) = ^{
+        
+        self.tabBar.frame = [self _tabbarRectHidden:_isTabbarHidden];
+    };
+    
+    self.contentView.frame = [self _contentViewRectHidden:_isTabbarHidden];
+    
+    if (aAnimated)
+    {
+        [UIView animateWithDuration:TABBAR_ANIM_DURATION animations:^{
+            
+            moveTabbarDown();
+            
+        } completion:^(BOOL finished) {
+            //DLog(@"hide tabbar finished:%d", finished);
+            
+            
+        }];
+    }
+    else
+    {
+        moveTabbarDown();
+        //self.tabBar.hidden = YES;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
