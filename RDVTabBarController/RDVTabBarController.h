@@ -33,6 +33,9 @@
 @property (nonatomic, weak) UIViewController *selectedViewController;
 @property (nonatomic) NSUInteger selectedIndex;
 
+- (void)showTabBarAnimated:(BOOL)aAnimated;
+- (void)hideTabBarAnimated:(BOOL)aAnimated;
+
 @end
 
 @protocol RDVTabBarControllerDelegate <NSObject>

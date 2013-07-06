@@ -64,6 +64,16 @@
     [[self tabBar] setFrame:CGRectMake(0, viewSize.height - tabBarHeight, viewSize.width, tabBarHeight)];
 }
 
+- (void)showTabBarAnimated:(BOOL)aAnimated
+{
+    
+}
+
+- (void)hideTabBarAnimated:(BOOL)aAnimated
+{
+    
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
